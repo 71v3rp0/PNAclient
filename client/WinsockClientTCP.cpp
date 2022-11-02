@@ -16,7 +16,7 @@ int main()
 	//Проверка на что?
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData))//wsastrartup() -функция загрузки библиотеки, makeword()-указываем версию winsock
 	{
-		cerr << "WSAStartup failed";
+		cerr << "      WSAStartup failed";
 		return 1;
 	}
 
@@ -34,13 +34,13 @@ int main()
 	const unsigned bufferSize = 513;
 	char dataBuffer[bufferSize];
 
-	cout << "Enter host addresses [localhost - 127.0.0.1]: ";
+	cout << "     Enter host addresses [localhost - 127.0.0.1]: ";
 
 	cin.get(dataBuffer, bufferSize).get();
 	//getaddrinfo((имяхоста/IP-адрес), (Порт), (структура с параметрами), (result указатель на структуру с результатами)
 	if (getaddrinfo(dataBuffer, "7000", &hints, &result)) // getaddrinfo("127.0.0.1", "7000", &hints, &result)
 	{
-		cerr << "getaddrinfo failed";
+		cerr << "     getaddrinfo failed";
 		WSACleanup();
 		return 1;
 	}
@@ -52,7 +52,7 @@ int main()
 
 	if (connectSocket == INVALID_SOCKET)
 	{
-		cerr << "socket failed";
+		cerr << "     socket failed";
 		freeaddrinfo(result);
 		WSACleanup();
 		return 1;
@@ -62,7 +62,7 @@ int main()
 
 	if (connect(connectSocket, result->ai_addr, result->ai_addrlen) == SOCKET_ERROR)
 	{
-		cerr << "connect failed";
+		cerr << "      Connection failed";
 		freeaddrinfo(result);
 		closesocket(connectSocket);
 		WSACleanup();
@@ -72,10 +72,9 @@ int main()
 	{
 		system("cls");
 
-		cout << "Client: connected to [" << dataBuffer << "] - successful\n"
-			<< "Use gamma: -g your_message\n"
-			<< "Press \"Enter\" disconnect from host\n\n";
-
+		cout << "     Client: connected to [" << dataBuffer << "] successfully\n"
+			<< "      Use gamma: -g your_message\n"
+			<< "      Press \"Enter\" to disconnect from host\n\n";
 	}
 
 	freeaddrinfo(result);
@@ -89,7 +88,7 @@ int main()
 	{
 		// Sending a message
 
-		cout << "Client: ";
+		cout << "      Client: ";
 
 		cin.get(dataBuffer, bufferSize);
 		res = strlen(dataBuffer);
@@ -107,7 +106,7 @@ int main()
 
 		if (send(connectSocket, dataBuffer, res + (bool)res, 0) == SOCKET_ERROR)
 		{
-			cerr << "send failed";
+			cerr << "      Sending to server failed";
 			closesocket(connectSocket);
 			WSACleanup();
 			return 1;
@@ -119,7 +118,7 @@ int main()
 
 			if (send(connectSocket, (char*)gammaBuffer, (bufferSize - 1) * sizeof(int), 0) == SOCKET_ERROR)
 			{
-				cerr << "send failed";
+				cerr << "      Sending to server failed";
 				closesocket(connectSocket);
 				WSACleanup();
 				return 1;
@@ -128,7 +127,7 @@ int main()
 
 		if (res == 0)
 		{
-			cout << "\nClient: connection closed...\n";
+			cout << "\n      Client: connection to server closed\n";
 
 			break;
 		}
@@ -139,11 +138,11 @@ int main()
 
 		if (res > 0)
 		{
-			cout << "Server: " << dataBuffer << endl << endl;
+			cout << "     Server: " << dataBuffer << endl << endl;
 		}
 		else
 		{
-			cerr << "recv failed";
+			cerr << "     recv failed";
 			closesocket(connectSocket);
 			WSACleanup();
 			return 1;
@@ -155,7 +154,7 @@ int main()
 
 	if (shutdown(connectSocket, SD_SEND))
 	{
-		cerr << "shutdown failed";
+		cerr << "      Client shutdown failed";
 		closesocket(connectSocket);
 		WSACleanup();
 		return 1;
